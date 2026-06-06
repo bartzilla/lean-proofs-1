@@ -92,7 +92,30 @@ Since ¬c is also given, this results in both c and ¬c being true simultaneousl
 6. Applied conjunction introduction to combine a and d into the final conclusion a ∧ d.
 
 
+======== Strategy: ========
 
+The goal is a conjunction, a ∧ d, so I first proved each component separately.
+The proof of d is direct: hbd : b → d and hb : b give d by modus ponens.
+The proof of a is indirect: assuming the device is unregistered would force c ∧ d, and therefore c,
+but this contradicts the given ¬c. Therefore the device must be registered.
 
+======== Alternative strategy: ========
 
+An alternative strategy would be to use the premise had : a ∨ d and perform proof by cases. However,
+this is less direct because a ∨ d only says that one of a or d holds, not that both hold. So that path is complicated.
+I chose not to use it because d follows directly from b → d and b, while 'a' follows from the contradiction
+between ¬a → (c ∧ d) and ¬c.
+
+======== Hardest step: ========
+
+The hardest step was proving 'a' because there is no direct hypothesis stating that the device is registered.
+The key logical insight is that the unregistered device case is incompatible with the evidence: if ¬a were true,
+the system rule would require c however the premises state ¬c. Therefore, the only consistent possibility is that 'a' holds.
+
+======== Formalisation assumptions: ========
+
+I assume that a, b, c, and d describe the current transaction state. I interpret ¬a as the device being unregistered,
+and ¬c as the location history being inconsistent. I also assume that the implication ¬a → (c ∧ d) is a strict requirement:
+if the device is unregistered, then both location consistency and biometric verification must apply.
+Under these assumptions, the inconsistency of the location should rule out the unregistered device case.
 -/
