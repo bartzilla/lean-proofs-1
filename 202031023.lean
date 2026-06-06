@@ -112,7 +112,7 @@ The hardest step was proving 'a' because there is no direct hypothesis stating t
 The key logical insight is that the unregistered device case is incompatible with the evidence: if ¬a were true,
 the system rule would require c however the premises state ¬c. Therefore, the only consistent possibility is that 'a' holds.
 
-======== Formalisation assumptions: ========
+======== Formalization assumptions: ========
 
 I assume that a, b, c, and d describe the current transaction state. I interpret ¬a as the device being unregistered,
 and ¬c as the location history being inconsistent. I also assume that the implication ¬a → (c ∧ d) is a strict requirement:
