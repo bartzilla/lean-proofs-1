@@ -119,3 +119,120 @@ and ¬c as the location history being inconsistent. I also assume that the impli
 if the device is unregistered, then both location consistency and biometric verification must apply.
 Under these assumptions, the inconsistency of the location should rule out the unregistered device case.
 -/
+
+/- ############# Scenario 3 ############### -/
+
+/-
+
+1. Choose ONE formalisation (α or β). State which and justify in 2–3 sentences.
+
+I choose formalisation β: (p ∧ q) → ¬r. Because this better aligns with the safety-monitoring interpretation of Rule A, because the word “check”
+can mean that the system verfies whether a person is present and finds that no person is present. This also fits consistently
+with Rule C, which states that motion was detected and the oven is on, but no person is present.
+
+-/
+
+/-
+2. Write the theorem signature under YOUR chosen formalisation. Prove it in Lean.
+-/
+theorem scenario3_beta (p q r s : Prop)
+  (ruleA : (p ∧ q) → ¬r)
+  (ruleB : (q ∧ ¬r) → s)
+  (ruleC : p ∧ q ∧ ¬r) : s := by
+  have hp : p := ruleC.left
+  have hq : q := ruleC.right.left
+  have hpq : p ∧ q := And.intro hp hq
+  have hnr : ¬r := ruleA hpq
+  have hqnr : q ∧ ¬r := And.intro hq hnr
+  exact ruleB hqnr
+
+  /-
+======== Rules applied for β: ========
+
+1. Conjunction elimination: to ruleC : p ∧ q ∧ ¬r.
+   ruleC contains the facts p, q, and ¬r, so I first extracted p and q.
+
+2. Conjunction introduction: to hp : p and hq : q to derive hpq : p ∧ q.
+   Rule A β requires p ∧ q as its input.
+
+3. Implication elimination: modus ponens using ruleA : (p ∧ q) → ¬r and hpq : p ∧ q to derive hnr : ¬r.
+   Under β, motion and oven-on imply that no person is confirmed.
+
+4. Conjunction introduction: to hq : q and hnr : ¬r to derive hqnr : q ∧ ¬r.
+   Rule B requires q ∧ ¬r as its input.
+
+5. Implication elimination: modus ponens using ruleB : (q ∧ ¬r) → s and hqnr : q ∧ ¬r to derive s
+   Since the oven is on and no person is confirmed, the shutdown is triggered
+-/
+
+/-
+3. Write the theorem signature under the OTHER formalisation. Prove it in Lean. Submit BOTH working proofs. For both proofs, list the rules applied in each proof step.
+-/
+theorem scenario3_alpha (p q r s : Prop)
+  (ruleA : (p ∧ q) → r)
+  (ruleB : (q ∧ ¬r) → s)
+  (ruleC : p ∧ q ∧ ¬r) : s := by
+  have hp : p := ruleC.left
+  have hq : q := ruleC.right.left
+  have hnr : ¬r := ruleC.right.right
+  have hpq : p ∧ q := And.intro hp hq
+  have hr : r := ruleA hpq
+  have contradiction : False := hnr hr
+  exact False.elim contradiction
+
+  /-
+======== Rules applied for α: ========
+
+1. Conjunction elimination to ruleC : p ∧ q ∧ ¬r.
+   ruleC contains the facts p, q, and ¬r, so I extracted each component.
+
+2. Conjunction introduction to hp : p and hq : q to derive hpq : p ∧ q.
+   Rule A α requires p ∧ q as its input.
+
+3. Implication elimination: modus ponens using ruleA : (p ∧ q) → r and hpq : p ∧ q to derive hr : r.
+   under α, motion and oven-on imply that a person is confirmed present.
+
+4. Negation elimination: using hnr : ¬r and hr : r to derive contradiction : False.
+   ruleC states that no person is confirmed, while Rule A α derives that a person is confirmed. These cannot both hold.
+
+5. False elimination: to derive s from contradiction.
+   Once the assumptions are inconsistent, any proposition follows, including shutdown s.
+-/
+
+/-
+4. Line-by-line comparison: number each line of both proofs. For every line that differs, state the line number and explain in one sentence what is different and why (which logical principle causes the divergence).
+
+======== Line differences  (BE CAREFUL WHEN EDITING TEXT ABOVE - LINES WILL SHIFT)========
+
+- β 144 vs α 177:
+In β, line 144 constructs hpq : p ∧ q, while in α, line 177 extracts hnr : ¬r from ruleC.
+This difference occurs because the β proof uses Rule A to derive ¬r, while the α proof needs ¬r from Rule C to later form a contradiction.
+
+- β 145 vs α 178:
+In β, line 145 applies Rule A β to derive hnr : ¬r, while in α, line 178 constructs hpq : p ∧ q.
+This reflects the different meaning of Rule A: β derives absence of a confirmed person, while α requires p ∧ q to derive presence of a confirmed person
+
+- β 146 vs α 179:
+In β, line 146 constructs hqnr : q ∧ ¬r, while in α, line 179 derives hr : r from Rule A α.
+The divergence occurs because β proceeds toward Rule B normally, while α produces r, which conflicts with ¬r.
+
+- β 147 vs α 180:
+In β, line 147 applies Rule B to derive s from q ∧ ¬r, while in α, line 180 derives False from hnr : ¬r and hr : r.
+The logical divergence is that β uses modus ponens with Rule B, while α uses contradiction.
+
+- α 181:
+The α proof needs False elimination to derive s from contradiction, while the β proof already derived s directly from Rule B.
+This shows that α proves shutdown only through inconsistency, whereas β proves shutdown through the intended safety rule.
+
+-/
+
+/-
+
+5. Domain reflection (3–4 sentences): which formalisation better captures the homeowner’s intent? Reference the specific word in Rule A that creates the ambiguity and explain its two possible readings, connecting to Unit 1 Lesson 3.
+
+I believe formalisation β better captures the homeowner’s intent. The ambiguity comes from the word “check” in Rule A.
+One interpretation (α) is that checking guarantees a person is confirmed present, leading to (p ∧ q) → r. A second interpretation (β) is that
+checking determines whether a person is present and may find that no person is confirmed, leading to (p ∧ q) → ¬r.
+This reflects the idea from Unit 1 Lesson 3 that natural language is often ambiguous and that different logical representations
+can be derived from the same statement depending on how key terms are interpreted.
+-/
