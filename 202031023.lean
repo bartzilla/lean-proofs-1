@@ -236,3 +236,138 @@ checking determines whether a person is present and may find that no person is c
 This reflects the idea from Unit 1 Lesson 3 that natural language is often ambiguous and that different logical representations
 can be derived from the same statement depending on how key terms are interpreted.
 -/
+
+/- ########################################## -/
+/- ############## Scenario 4 ################ -/
+/- # Autonomous Vehicle Collision Avoidance # -/
+/- ########################################## -/
+
+/-
+Use case: An autonomous vehicle receives input from its perception system.
+If either an obstacle or pedestrian is detected, the system confirms a collision risk.
+Once collision risk is confirmed, the emergency braking system is activated.
+-/
+
+/-
+1. Name your 4 propositions with English meanings (as Lean comments).
+
+p = obstacle is detected ahead
+q = pedestrian is detected ahead
+r = collision risk is confirmed
+s = emergency braking is activated
+-/
+
+/-
+2. Write the theorem signature with named hypotheses. Prove it in Lean.
+-/
+theorem scenario4 (p q r s : Prop)
+  (h1 : p ∨ q)
+  (h2 : p → r)
+  (h3 : q → r)
+  (h4 : r → s) : r ∧ s := by
+
+  have hr : r := by
+    cases h1 with
+    | inl hp =>
+        exact h2 hp
+    | inr hq =>
+        exact h3 hq
+
+  have hs : s := h4 hr
+
+  exact And.intro hr hs
+
+/-
+3. Explanation: rules applied in order, alternative strategy, and the hardest step you faced.
+-/
+  /-
+======== Rules applied: ========
+
+1. Applied disjunction elimination / proof by cases to h1 : p ∨ q.
+   h1 states that either an obstacle is detected ahead or a pedestrian is detected ahead, so both cases must be considered.
+
+2. In the first case, I obtained hp : p.
+   Applied implication elimination / modus ponens using h2 : p → r and hp : p to derive r.
+   If an obstacle is detected, then collision risk is confirmed.
+
+3. In the second case, I obtained hq : q.
+   Applied implication elimination / modus ponens using h3 : q → r and hq : q to derive r.
+   If a pedestrian is detected, then collision risk is confirmed.
+
+4. Since both cases produce r, I concluded r by disjunction elimination.
+   Regardless of whether the detected risk comes from an obstacle or a pedestrian, collision risk is confirmed.
+
+5. Applied implication elimination / modus ponens using h4 : r → s and hr : r to derive s.
+   Once collision risk is confirmed, emergency braking is activated.
+
+6. Applied conjunction introduction using hr : r and hs : s to derive r ∧ s.
+   Since both collision risk and emergency braking have been established, they can be combined into the final goal.
+
+======== Alternative strategy: ========
+
+An alternative strategy would be to make the goal only s instead of r ∧ s.
+In that case, the proof could first derive r by proof by cases and then use h4 : r → s to derive s.
+However, I chose r ∧ s as the goal because it makes the reasoning more explicit: the vehicle first
+confirms collision risk and then activates emergency braking.
+
+======== Hardest step: ========
+
+The hardest step was designing the scenario so that it was not just a simple linear implication chain.
+The proof needed to require at least two different proof rules, so I introduced h1 : p ∨ q to represent two possible
+perception inputs and used proof by cases to derive r in both branches.
+-/
+
+/-
+4. Design rationale (3–4 sentences): why these hypotheses model a real safety concern.
+Explain why the proof structure mirrors the real-world reasoning a vehicle controller
+would perform.
+-/
+/-
+
+======== Design rationale: ========
+
+These hypotheses model a realistic autonomous vehicle safety concern because collision risk can be detected through
+multiple perception sources. An obstacle detected ahead or a pedestrian detected ahead are both valid reasons for
+the vehicle to conclude that a collision risk exists. Once collision risk is confirmed, the vehicle's safety
+controller should activate emergency braking to prevent an accident.
+
+The proof structure mirrors the reasoning performed by a real vehicle controller. The perception system first
+evaluates different possible sources of danger (obstacle or pedestrian detection) and confirms collision risk
+regardless of which source triggered the alert. The controller then uses this confirmed risk assessment to
+activate emergency braking, producing the final safety response.
+
+-/
+
+/-
+5. Counterfactual analysis: choose ONE hypothesis and REMOVE it
+-/
+
+/-
+
+======== Counterfactual analysis: ========
+
+Removed hypothesis:
+
+h4 : r → s
+
+(a) Is the goal still provable?
+
+No. The goal r ∧ s is no longer provable.
+
+(b) Which proof step breaks?
+
+The proof step that breaks is:
+
+have hs : s := h4 hr
+
+Without h4, the proof can still derive hr : r from h1, h2, and h3, but there is no rule allowing the system to derive s from r.
+Therefore, the evidence for emergency braking is missing.
+
+(c) Real-world safety consequence:
+
+Removing h4 represents a failure in the emergency braking controller.
+The perception and risk-assessment subsystems may still detect an obstacle or pedestrian and confirm collision risk,
+but the vehicle no longer has a rule connecting confirmed collision risk to braking action. In real-world terms,
+this means the vehicle may correctly identify danger but fail to activate emergency braking, creating a serious collision risk.
+
+-/
