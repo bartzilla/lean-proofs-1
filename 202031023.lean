@@ -371,3 +371,71 @@ but the vehicle no longer has a rule connecting confirmed collision risk to brak
 this means the vehicle may correctly identify danger but fail to activate emergency braking, creating a serious collision risk.
 
 -/
+
+/- ########################################## -/
+/- ################ Part 2 ################## -/
+/- ########################################## -/
+
+opaque conj : Prop → Prop → Prop
+opaque provable : Prop → Prop
+
+axiom AxConjElimRight : ∀ x y, provable (conj x y) → provable y
+axiom AxConjElimLeft  : ∀ x y, provable (conj x y) → provable x
+axiom AxConjIntro     : ∀ x y, provable x → provable y → provable (conj x y)
+axiom AxPrTrue        : provable True
+axiom AxNotPrFalse    : provable False → False
+
+theorem ex1 : ∀ x, ¬ provable (conj x False) ∧ (provable x → ¬ provable False) := by
+  intro x
+  constructor
+  · intro hConj
+    have hFalse : provable False := AxConjElimRight x False hConj
+    exact AxNotPrFalse hFalse
+  · intro hx
+    intro hFalse
+    exact AxNotPrFalse hFalse
+
+/-
+TRACE for ex1
+
+1. Introduced an arbitrary proposition x.
+   This is required because the theorem states ∀ x.
+
+2. Applied conjunction introduction using constructor.
+   This splits the goal into two subgoals:
+   ¬ provable (conj x False)
+   and
+   provable x → ¬ provable False.
+
+3. To prove ¬ provable (conj x False), I assumed hConj : provable (conj x False).
+   Since negation means implication to False, proving ¬ provable (conj x False) means showing that this assumption leads to
+   contradiction.
+
+4. Applied AxConjElimRight to hConj.
+   This derives hFalse : provable False from provable (conj x False).
+
+5. Applied AxNotPrFalse to hFalse.
+   This turns hFalse : provable False into False, completing the contradiction.
+
+6. To prove provable x → ¬ provable False, I assumed hx : provable x and hFalse : provable False.
+   The assumption hx is not needed, because provable False is impossible independently of x.
+
+7. Applied AxNotPrFalse to hFalse.
+   This derives False and therefore proves ¬ provable False.
+
+Axioms used:
+- AxConjElimRight: used to extract provable False from provable (conj x False).
+- AxNotPrFalse: used to show that provable False leads to contradiction.
+
+Axioms not used:
+- AxConjElimLeft
+- AxConjIntro
+- AxPrTrue
+
+CONCEPT for ex1
+
+This theorem expresses a consistency property of the abstract provability system. It says that a conjunction whose right-hand
+ side is False cannot be provable, because AxConjElimRight would then make False provable. However, AxNotPrFalse states that
+ provable False is impossible. The second part says that even if an arbitrary proposition x is provable, this does not allow the
+ system to prove False.
+-/
