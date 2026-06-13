@@ -385,6 +385,7 @@ axiom AxConjIntro     : ∀ x y, provable x → provable y → provable (conj x 
 axiom AxPrTrue        : provable True
 axiom AxNotPrFalse    : provable False → False
 
+/- EX1 -/
 theorem ex1 : ∀ x, ¬ provable (conj x False) ∧ (provable x → ¬ provable False) := by
   intro x
   constructor
@@ -399,20 +400,20 @@ theorem ex1 : ∀ x, ¬ provable (conj x False) ∧ (provable x → ¬ provable 
 TRACE for ex1
 
 1. Introduced an arbitrary proposition x.
-   This is required because the theorem states ∀ x.
+   This is neeeded because the theorem states ∀ x.
 
 2. Applied conjunction introduction using constructor.
    This splits the goal into two subgoals:
    ¬ provable (conj x False)
-   and
-   provable x → ¬ provable False.
+   and:
+   provable x → ¬ provable False
 
 3. To prove ¬ provable (conj x False), I assumed hConj : provable (conj x False).
    Since negation means implication to False, proving ¬ provable (conj x False) means showing that this assumption leads to
-   contradiction.
+   contradiction
 
 4. Applied AxConjElimRight to hConj.
-   This derives hFalse : provable False from provable (conj x False).
+   This derives hFalse : provable False from provable (conj x False)
 
 5. Applied AxNotPrFalse to hFalse.
    This turns hFalse : provable False into False, completing the contradiction.
@@ -434,8 +435,169 @@ Axioms not used:
 
 CONCEPT for ex1
 
-This theorem expresses a consistency property of the abstract provability system. It says that a conjunction whose right-hand
- side is False cannot be provable, because AxConjElimRight would then make False provable. However, AxNotPrFalse states that
+This theorem expresses a consistency property of the abstract provability system. It says that a conjunction in the right-hand
+ side is False cannot be provable, because AxConjElimRight would then make False provable. But, AxNotPrFalse states that
  provable False is impossible. The second part says that even if an arbitrary proposition x is provable, this does not allow the
  system to prove False.
+-/
+
+/- EX2 -/
+theorem ex2 : ∀ x y, provable (conj x False) → provable y := by
+  intro x
+  intro y
+  intro hConj
+  have hFalse : provable False := AxConjElimRight x False hConj
+  have contradiction : False := AxNotPrFalse hFalse
+  exact False.elim contradiction
+
+/-
+TRACE for ex2
+
+1. Introduced arbitrary propositions x and y.
+   This is required because the theorem states ∀ x y
+
+2. Assumed hConj : provable (conj x False).
+   This is the premise of the implication
+
+3. Applied AxConjElimRight to hConj.
+   This derives hFalse : provable False from provable (conj x False).
+
+4. Applied AxNotPrFalse to hFalse.
+   This derives contradiction : False
+
+5. Applied False.elim to contradiction.
+   From False, any proposition follows, including provable y
+
+Axioms used:
+- AxConjElimRight: used to extract provable False from provable (conj x False).
+- AxNotPrFalse: used to turn provable False into contradiction
+
+Axioms not used:
+- AxConjElimLeft
+- AxConjIntro
+- AxPrTrue
+
+CONCEPT for ex2
+
+EX2 expresses the principle of explosion in the abstract provability system. If provable (conj x False) were available,
+then AxConjElimRight would allow us to derive provable False. But AxNotPrFalse states that provable False leads to contradiction.
+Once a contradiction is obtained, Lean can derive any goal, so provable y follows.
+-/
+
+/- EX3 -/
+theorem ex3 : ∀ x y z, provable (conj x (conj y z)) → provable (conj (conj y x) z) := by
+  intro x
+  intro y
+  intro z
+  intro hxyz
+
+  have hx : provable x := AxConjElimLeft x (conj y z) hxyz
+  have hyz : provable (conj y z) := AxConjElimRight x (conj y z) hxyz
+  have hy : provable y := AxConjElimLeft y z hyz
+  have hz : provable z := AxConjElimRight y z hyz
+
+  have hyx : provable (conj y x) := AxConjIntro y x hy hx
+  exact AxConjIntro (conj y x) z hyx hz
+
+/-
+TRACE for ex3
+
+1. Introduced arbitrary propositions x, y, and z.
+   This is required because the theorem states ∀ x y z
+
+2. Assumed hxyz : provable (conj x (conj y z)).
+   This is the premise of the implication
+
+3. Applied AxConjElimLeft to hxyz.
+   This derives hx : provable x from provable (conj x (conj y z))
+
+4. Applied AxConjElimRight to hxyz.
+   This derives hyz : provable (conj y z) from provable (conj x (conj y z)).
+
+5. Applied AxConjElimLeft to hyz.
+   This derives hy : provable y from provable (conj y z)
+
+6. Applied AxConjElimRight to hyz.
+   This derives hz : provable z from provable (conj y z)
+
+7. Applied AxConjIntro to hy and hx.
+   This derives hyx : provable (conj y x)
+
+8. Applied AxConjIntro to hyx and hz.
+   This derives the final goal: provable (conj (conj y x) z)
+
+Axioms used:
+- AxConjElimLeft: used to extract provable x and provable y.
+- AxConjElimRight: used to extract provable (conj y z) and provable z.
+- AxConjIntro: used to construct provable (conj y x) and then provable (conj (conj y x) z).
+
+Axioms not used:
+- AxPrTrue
+- AxNotPrFalse
+
+CONCEPT for ex3
+
+This theorem shows that the abstract provability system can rearrange the structure of nested conjunctions using the
+conjunction elimination and introduction axioms. Starting from a proof of x combined with y and z, the proof extracts x, y, and z
+individually, then rebuilds them in a different order as (y ∧ x) ∧ z. Because conj is opaque, this rearrangement is not automatic;
+it is possible only through the stated axioms for eliminating and introducing conjunctions.
+-/
+
+/-
+Section B1
+Constructed Classical Theorem
+-/
+
+/-
+Theorem Statement:
+
+This theorem states that for any proposition x, either provable x holds or provable x does not hold.
+-/
+
+open Classical
+
+theorem b1 : ∀ x, provable x ∨ ¬ provable x := by
+  intro x
+  exact em (provable x)
+
+/-
+TRACE for B1
+
+1. Opened Classical reasoning using "open Classical"
+   It allows the proof to use the law of excluded middle (em)
+
+2. Arbitrary proposition x
+   Theorem stating for ∀ x, where x is treated as an arbitrary proposition
+
+3. Apply em to the proposition provable x
+   em (provable x) gives provable x ∨ ¬ provable x
+
+4. The goal provable x ∨ ¬ provable x follows directly from classical em
+
+
+CONCEPT answering:
+
+(a) What does the theorem mean?
+
+ - This theorem says that for any proposition x, either x can be proved or it cannot be proved. The theorem does not tell
+   which one is true for a particular x, only that one of the two possibilities must hold
+
+(b) Where exactly does the constructive proof attempt fail?
+
+ - A constructive proof fails at the point where we need to prove the disjunction provable
+   x ∨ ¬ provable x. Constructively, proving a disjunction requires evidence for one side: either a
+   proof of provable x or a proof that provable x leads to contradiction. For an arbitrary x, no such evidence
+   is available
+
+(c) Why does Classical reasoning resolve it?
+
+ - Classical reasoning has the law of excluded middle. Applying em to provable x Lean obtains provable x ∨ ¬ provable x
+   directly without need to construct evidence for one particular side
+
+(d) What does this reveal about the difference between constructive and classical provability?
+
+ - This shows that constructive reasoning needs explicit evidence to prove a disjunction while classical reasoning permits a
+   disjunction to be accepted because one of the two alternatives must hold. In this theorem, classical logic can decide
+   provable x ∨ ¬ provable x abstractly, even though the proof gives no actual method for determining which side is true.
+
 -/
