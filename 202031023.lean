@@ -424,15 +424,6 @@ TRACE for ex1
 7. Applied AxNotPrFalse to hFalse.
    This derives False and therefore proves ¬ provable False.
 
-Axioms used:
-- AxConjElimRight: used to extract provable False from provable (conj x False).
-- AxNotPrFalse: used to show that provable False leads to contradiction.
-
-Axioms not used:
-- AxConjElimLeft
-- AxConjIntro
-- AxPrTrue
-
 CONCEPT for ex1
 
 This theorem expresses a consistency property of the abstract provability system. It says that a conjunction in the right-hand
@@ -467,15 +458,6 @@ TRACE for ex2
 
 5. Applied False.elim to contradiction.
    From False, any proposition follows, including provable y
-
-Axioms used:
-- AxConjElimRight: used to extract provable False from provable (conj x False).
-- AxNotPrFalse: used to turn provable False into contradiction
-
-Axioms not used:
-- AxConjElimLeft
-- AxConjIntro
-- AxPrTrue
 
 CONCEPT for ex2
 
@@ -525,15 +507,6 @@ TRACE for ex3
 
 8. Applied AxConjIntro to hyx and hz.
    This derives the final goal: provable (conj (conj y x) z)
-
-Axioms used:
-- AxConjElimLeft: used to extract provable x and provable y.
-- AxConjElimRight: used to extract provable (conj y z) and provable z.
-- AxConjIntro: used to construct provable (conj y x) and then provable (conj (conj y x) z).
-
-Axioms not used:
-- AxPrTrue
-- AxNotPrFalse
 
 CONCEPT for ex3
 
@@ -600,4 +573,153 @@ CONCEPT answering:
    disjunction to be accepted because one of the two alternatives must hold. In this theorem, classical logic can decide
    provable x ∨ ¬ provable x abstractly, even though the proof gives no actual method for determining which side is true.
 
+-/
+
+/-
+Section B2
+Axiom Dependency Analysis
+
+Chosen theorem for Q1–Q4: ex3
+
+ - ex3: ∀ x y z, provable (conj x (conj y z)) → provable (conj (conj y x) z)
+-/
+
+/-
+Q1. Which axioms does the proof of ex3 actually use?
+
+The proof of ex3 uses three axioms:
+
+1. AxConjElimLeft
+   lines: 476
+   have hx : provable x := AxConjElimLeft x (conj y z) hxyz
+
+   It is used to extract provable x from provable (conj x (conj y z)).
+
+   Used in line: 478
+   have hy : provable y := AxConjElimLeft y z hyz
+
+   extracts provable y from provable (conj y z)
+
+2. AxConjElimRight
+   line: 477
+   have hyz : provable (conj y z) := AxConjElimRight x (conj y z) hxyz
+
+   Extracts provable (conj y z) from provable (conj x (conj y z)).
+
+   Also used in the line: 479
+   have hz : provable z := AxConjElimRight y z hyz
+
+   Extracts provable z from provable (conj y z)
+
+3. AxConjIntro
+   line: 481
+   have hyx : provable (conj y x) := AxConjIntro y x hy hx
+
+   Builds provable (conj y x) from provable y and provable x.
+
+   line: 482
+   exact AxConjIntro (conj y x) z hyx hz
+
+   It builds the final conclusion provable (conj (conj y x) z)
+-/
+
+/-
+Q2. Choose one used axiom. Remove it hypothetically. Could the theorem still be proved?
+If no: which step fails and why? If yes: sketch the alternative path.
+
+AxConjIntro
+
+If AxConjIntro was removed the theorem ex3 could not be proved with this proof.
+The proof could still extract provable x, provable y, and provable z using AxConjElimLeft and AxConjElimRight.
+However, the step : have hyx : provable (conj y x) := AxConjIntro y x hy hx
+would fail because there will be no axiom allowing to build provable (conj y x) from provable y and provable x
+
+Last step : exact AxConjIntro (conj y x) z hyx hz. would also fail for the same reason: Without AxConjIntro, the system can
+decompose conjunctions but but will no longer be able to construct new conjunctions.
+Therefore ex3 would not be provable using this axiom system
+-/
+
+/-
+Q3. For each unused axiom: explain in one sentence why it is not needed for this specific theorem.
+
+The unused axioms in ex3 are AxPrTrue and AxNotPrFalse.
+
+- AxPrTrue: is not needed because the proof never requires proving True or using provable True as intermediate step
+
+- AxNotPrFalse: is not needed because the proof never derives provable False and does not use contradiction reasoning
+
+-/
+
+/-
+Q4. Which single axiom is most essential to your chosen theorem?
+Why does removing it make the theorem fundamentally unprovable?
+
+The most essential axiom for ex3 is AxConjIntro
+
+The goal of ex3 is to prove: provable (conj (conj y x) z)
+
+Without AxConjIntro, the proof could still extract provable x, provable y, and provable z using AxConjElimLeft and AxConjElimRight
+ but there would be no way to combine them into the required conjunctions.
+Therefore removing AxConjIntro makes the theorem unprovable
+-/
+
+/-
+Q5 Hypothetical Sixth Axiom
+
+Extended system with disjunction predicate and a new axiom:
+-/
+
+opaque disj : Prop → Prop → Prop
+
+axiom AxDisjIntro : ∀ x y, provable x → provable (disj x y)
+
+/-
+(a) Does AxDisjIntro make any of ex1, ex2, or ex3 easier to prove? Why or why not?
+
+ - No. AxDisjIntro does not make ex1, ex2, or ex3 easier to prove.
+
+ - ex1, ex2, and ex3 do not mention disj. AxDisjIntro can only produce terms of the form provable (disj x y),
+but the goals of ex1, ex2, and ex3 involve only provable, conj, and False.
+Therefore, AxDisjIntro cannot replace any proof step in those theorems
+-/
+
+/-
+(b) Could AxDisjIntro make any original axiom redundant for any specific theorem? Justify with reference to proof steps.
+
+ - Also no. AxDisjIntro does not make any original axiom redundant for ex1, ex2, or ex3.
+
+In ex1 and ex2, AxDisjIntro cannot derive provable False or contradiction
+In ex3 AxDisjIntro cannot replace the conjunction axioms because it only introduces disjunctions
+-/
+
+/-
+(c) Write one new theorem involving provable (disj...) that is only provable because both AxDisjIntro and the original five axioms work together.
+-/
+
+theorem exDisj : ∀ x y, provable (conj x y)→ provable (disj x y) :=by
+  intro x
+  intro y
+  intro hxy
+  have hx : provable x := AxConjElimLeft x y hxy
+  exact AxDisjIntro x y hx
+
+/-
+
+Theorem: If conj x y is provable then disj x y is provable.
+
+Proof:
+1. Assume provable (conj x y)
+2. Then AxConjElimLeft is used to get provable x
+3. Then AxDisjIntro to get provable (disj x y)
+
+why neither system alone suffices?:
+ - Original axioms cannot prove disj because they do not mention disj
+ - AxDisjIntro alone is not enough because it needs provable x as input
+ - Therefore the theorem requires both AxConjElimLeft and AxDisjIntro.
+-/
+
+
+/-
+Q6 Cross-Theorem Comparison:
+ - TODO
 -/
