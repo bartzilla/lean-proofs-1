@@ -1,7 +1,8 @@
-/-
-- Part 1
-- Scenario 1
--/
+/- ########################################## -/
+/- ############## Scenario 1 ################ -/
+/- ######    University Enrolment    ######## -/
+/- ########################################## -/
+
 theorem scenario1 (x1 x2 y1 y2 z : Prop)
   (r1 : x1 ∨ x2)
   (r2 : y1 ∨ y2)
@@ -53,7 +54,10 @@ eligibility without needing both a prerequisite and an approval.
 -/
 
 
-/-Scenario 2-/
+/- ########################################## -/
+/- ############## Scenario 2 ################ -/
+/- ### Banking Transaction Authorisation #### -/
+/- ########################################## -/
 
 theorem scenario2 (a b c d : Prop) :
   ((b → d) ∧ (¬a → (c ∧ d)) ∧ (a ∨ d) ∧ b ∧ ¬c) → (a ∧ d) := by
@@ -120,7 +124,10 @@ if the device is unregistered, then both location consistency and biometric veri
 Under these assumptions, the inconsistency of the location should rule out the unregistered device case.
 -/
 
-/- ############# Scenario 3 ############### -/
+/- ########################################## -/
+/- ############## Scenario 3 ################ -/
+/- ######      Smart Home Safety         #### -/
+/- ########################################## -/
 
 /-
 
@@ -204,23 +211,23 @@ theorem scenario3_alpha (p q r s : Prop)
 
 ======== Line differences  (BE CAREFUL WHEN EDITING TEXT ABOVE - LINES WILL SHIFT)========
 
-- β 144 vs α 177:
-In β, line 144 constructs hpq : p ∧ q, while in α, line 177 extracts hnr : ¬r from ruleC.
+- β 151 vs α 1845:
+In β, line 151 constructs hpq : p ∧ q, while in α, line 184 extracts hnr : ¬r from ruleC.
 This difference occurs because the β proof uses Rule A to derive ¬r, while the α proof needs ¬r from Rule C to later form a contradiction.
 
-- β 145 vs α 178:
-In β, line 145 applies Rule A β to derive hnr : ¬r, while in α, line 178 constructs hpq : p ∧ q.
+- β 152 vs α 185:
+In β, line 152 applies Rule A β to derive hnr : ¬r, while in α, line 185 constructs hpq : p ∧ q.
 This reflects the different meaning of Rule A: β derives absence of a confirmed person, while α requires p ∧ q to derive presence of a confirmed person
 
-- β 146 vs α 179:
-In β, line 146 constructs hqnr : q ∧ ¬r, while in α, line 179 derives hr : r from Rule A α.
+- β 153 vs α 186:
+In β, line 153 constructs hqnr : q ∧ ¬r, while in α, line 186 derives hr : r from Rule A α.
 The divergence occurs because β proceeds toward Rule B normally, while α produces r, which conflicts with ¬r.
 
-- β 147 vs α 180:
-In β, line 147 applies Rule B to derive s from q ∧ ¬r, while in α, line 180 derives False from hnr : ¬r and hr : r.
+- β 154 vs α 187:
+In β, line 154 applies Rule B to derive s from q ∧ ¬r, while in α, line 187 derives False from hnr : ¬r and hr : r.
 The logical divergence is that β uses modus ponens with Rule B, while α uses contradiction.
 
-- α 181:
+- α 188:
 The α proof needs False elimination to derive s from contradiction, while the β proof already derived s directly from Rule B.
 This shows that α proves shutdown only through inconsistency, whereas β proves shutdown through the intended safety rule.
 
@@ -373,7 +380,8 @@ this means the vehicle may correctly identify danger but fail to activate emerge
 -/
 
 /- ########################################## -/
-/- ################ Part 2 ################## -/
+/- ######           Part 2             ###### -/
+/- ######           Section A          ###### -/
 /- ########################################## -/
 
 opaque conj : Prop → Prop → Prop
@@ -412,17 +420,17 @@ TRACE for ex1
    Since negation means implication to False, proving ¬ provable (conj x False) means showing that this assumption leads to
    contradiction
 
-4. Applied AxConjElimRight to hConj.
+4. Applied AxConjElimRight to hConj
    This derives hFalse : provable False from provable (conj x False)
 
-5. Applied AxNotPrFalse to hFalse.
+5. Applied AxNotPrFalse to hFalse
    This turns hFalse : provable False into False, completing the contradiction.
 
 6. To prove provable x → ¬ provable False, I assumed hx : provable x and hFalse : provable False.
    The assumption hx is not needed, because provable False is impossible independently of x.
 
-7. Applied AxNotPrFalse to hFalse.
-   This derives False and therefore proves ¬ provable False.
+7. Applied AxNotPrFalse to hFalse
+   This derives False and therefore proves ¬ provable False
 
 CONCEPT for ex1
 
@@ -516,12 +524,14 @@ individually, then rebuilds them in a different order as (y ∧ x) ∧ z. Becaus
 it is possible only through the stated axioms for eliminating and introducing conjunctions.
 -/
 
-/-
-Section B1
-Constructed Classical Theorem
--/
+
+/- ########################################## -/
+/- ######           Part 2             ###### -/
+/- ######          Section B1          ###### -/
+/- ########################################## -/
 
 /-
+Constructed Classical Theorem
 Theorem Statement:
 
 This theorem states that for any proposition x, either provable x holds or provable x does not hold.
@@ -575,49 +585,50 @@ CONCEPT answering:
 
 -/
 
+/- ########################################## -/
+/- ######           Part 2             ###### -/
+/- ######          Section B2          ###### -/
+/- ########################################## -/
+
 /-
-Section B2
 Axiom Dependency Analysis
-
 Chosen theorem for Q1–Q4: ex3
-
  - ex3: ∀ x y z, provable (conj x (conj y z)) → provable (conj (conj y x) z)
 -/
 
 /-
 Q1. Which axioms does the proof of ex3 actually use?
-
 The proof of ex3 uses three axioms:
 
 1. AxConjElimLeft
-   lines: 476
+   lines: 484
    have hx : provable x := AxConjElimLeft x (conj y z) hxyz
 
    It is used to extract provable x from provable (conj x (conj y z)).
 
-   Used in line: 478
+   Used in line: 486
    have hy : provable y := AxConjElimLeft y z hyz
 
    extracts provable y from provable (conj y z)
 
 2. AxConjElimRight
-   line: 477
+   line: 485
    have hyz : provable (conj y z) := AxConjElimRight x (conj y z) hxyz
 
    Extracts provable (conj y z) from provable (conj x (conj y z)).
 
-   Also used in the line: 479
+   Also used in the line: 487
    have hz : provable z := AxConjElimRight y z hyz
 
    Extracts provable z from provable (conj y z)
 
 3. AxConjIntro
-   line: 481
+   line: 489
    have hyx : provable (conj y x) := AxConjIntro y x hy hx
 
    Builds provable (conj y x) from provable y and provable x.
 
-   line: 482
+   line: 490x
    exact AxConjIntro (conj y x) z hyx hz
 
    It builds the final conclusion provable (conj (conj y x) z)
@@ -717,7 +728,6 @@ why neither system alone suffices?:
  - AxDisjIntro alone is not enough because it needs provable x as input
  - Therefore the theorem requires both AxConjElimLeft and AxDisjIntro.
 -/
-
 
 /-
 Q6 Cross-Theorem Comparison:
