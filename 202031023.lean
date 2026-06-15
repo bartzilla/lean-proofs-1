@@ -733,3 +733,34 @@ why neither system alone suffices?:
 Q6 Cross-Theorem Comparison:
  - TODO
 -/
+
+
+
+/- ########################################## -/
+/- # Statement on the Use of Generative AI ## -/
+/- ########################################## -/
+
+/-
+
+AI Tool Used: Gemini 3.5 Flash (Google)
+
+
+Generative AI Category: Amber (Assistive Role)
+In accordance with the assessment requirements, Generative AI was used in an assistive capacity to support learning,
+understanding, and the technical execution of this assessment. The specific nature of this assistance included
+
+- Conceptual Understanding: The AI was used as a study support tool to explain concepts covered in the module, including propositional logic, natural deduction,
+first-order logic, proof strategies, and the interpretation of logical statements and axioms.
+
+- Lean 4 Support and Debugging: AI was used to help interpret Lean 4 syntax, understand compiler error messages,
+discuss proof structures, and troubleshoot issues encountered while developing formal proofs.
+
+- Problem Explanation and Clarification: To clarify assessment requirements, explain logical reasoning steps, and improve understanding of the objectives and
+expected outcomes of individual assessment tasks.
+
+- Brainstorming: To brainstorm possible ideas for the student-designed propositional reasoning scenario in the autonomous vehicle domain before a
+final scenario was selected and developed independently
+
+- All theorem selections, formalizations, proofs, Lean code, explanations, and final submission decisions were reviewed, edited, and understood by me.
+I take full responsibility for the submitted work.
+-/
