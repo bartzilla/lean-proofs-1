@@ -19,19 +19,19 @@ Analysis
 
 ======== Rules applied: ========
 1. Applied disjunction elimination (proof by cases) to r1 : x1 ∨ x2.
-   Justification: r1 states that either x1 or x2 holds, so both cases must be considered.
+   Justification: r1 states that either x1 or x2 holds, so both cases must be considered
 
-2. In the first case, I obtained hx1 : x1.
+2. In the first case, I obtained hx1 : x1
    Applied implication elimination (modus ponens) using r3 : x1 → z and hx1 : x1 to derive z.
 
-3. In the second case, I obtained hx2 : x2.
+3. In the second case, I obtained hx2 : x2
    Applied implication elimination (modus ponens) using r4 : x2 → z and hx2 : x2 to derive z.
 
 4. Since both cases produce z, I concluded z by disjunction elimination.
 
 ======== Strategy: ========
 
-For this scenario, I used the course-prerequisite pathway. Hypothesis r1 guarantees
+For this scenario I used the course-prerequisite pathway. Hypothesis r1 guarantees
 that the student has passed at least one prerequisite (x1 or x2).
 Hypotheses r3 and r4 state that each prerequisite is individually sufficient for eligibility.
 Therefore, by performing a proof by cases on r1, either x1 or x2 can be used to derive z.
@@ -40,11 +40,11 @@ This allows the goal z to be proved without using the approval pathway represent
 ======== Alternative strategy: ========
 An alternative strategy would be to use the approval pathway with
 r2, r5, and r6. Since r2 states y1 ∨ y2 and r5, r6 show either approval
-implies z, this would also prove eligibility to take the advance module.
+implies z, this would also prove eligibility to take the advance module
 
 ======== Hardest step: ========
 The hardest step was recognising that only one independent pathway is needed.
-Although six hypotheses are provided, the proof can be completed using only r1, r3, and r4.
+Although six hypotheses are provided, the proof can be completed using only r1, r3, and r4
 
 ======== Formalization assumptions: ========
 I assumed x1 and x2 represent sufficient prerequisites specifically because the scenario states
@@ -98,7 +98,7 @@ Since ¬c is also given, this results in both c and ¬c being true simultaneousl
 
 ======== Strategy: ========
 
-The goal is a conjunction, a ∧ d, so I first proved each component separately.
+The goal is a conjunction a ∧ d, so I first proved each component separately.
 The proof of d is direct: hbd : b → d and hb : b give d by modus ponens.
 The proof of a is indirect: assuming the device is unregistered would force c ∧ d, and therefore c,
 but this contradicts the given ¬c. Therefore the device must be registered.
@@ -114,7 +114,7 @@ between ¬a → (c ∧ d) and ¬c.
 
 The hardest step was proving 'a' because there is no direct hypothesis stating that the device is registered.
 The key logical insight is that the unregistered device case is incompatible with the evidence: if ¬a were true,
-the system rule would require c however the premises state ¬c. Therefore, the only consistent possibility is that 'a' holds.
+the system rule would require c however the premises state ¬c. Therefore, the only consistent possibility is that 'a' holds
 
 ======== Formalization assumptions: ========
 
@@ -194,10 +194,10 @@ theorem scenario3_alpha (p q r s : Prop)
    ruleC contains the facts p, q, and ¬r, so I extracted each component.
 
 2. Conjunction introduction to hp : p and hq : q to derive hpq : p ∧ q.
-   Rule A α requires p ∧ q as its input.
+   Rule A α requires p ∧ q as its input
 
 3. Implication elimination: modus ponens using ruleA : (p ∧ q) → r and hpq : p ∧ q to derive hr : r.
-   under α, motion and oven-on imply that a person is confirmed present.
+   under α, motion and oven-on imply that a person is confirmed present
 
 4. Negation elimination: using hnr : ¬r and hr : r to derive contradiction : False.
    ruleC states that no person is confirmed, while Rule A α derives that a person is confirmed. These cannot both hold.
